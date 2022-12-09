@@ -55,13 +55,61 @@ class SupplyStacks():
             self.shipdeck[end].append(crate)
 
 
+class SupplyStacks_v2(SupplyStacks):
+    ## Cargo is now moved in a single step
+    ## 
+
+    def __init__(self) -> None:
+        super().__init__()
+    
+    def process_data(self, filepath):
+        is_built = False ## Tracks whether the shipdeck is built
+        with open(filepath) as f:
+            for line in f:
+                line = line.strip('\n') ## keep empty spaces
+                if line.startswith('move'):
+                    self.move_boxes_v2(line)
+                elif '[' in line:
+                    self.build_initial_stack(line, is_built)
+                    is_built = True
+                else:
+                    pass
+                    # print('empty line?')
+                # print(self.shipdeck) 
+                # print()
+
+    def move_boxes_v2(self, line: str):
+                ## The first number is how many boxes
+        ## Second number is starting location
+        ## Third number is end location
+        no_boxes = int(line.split(' ')[1])
+        start = int(line.split(' ')[3])
+        end = int(line.split(' ')[5])
+
+        stack_idx = no_boxes * -1
+        
+        ## Save the boxes to remove, and delete them from original list
+        stack = self.shipdeck[start][stack_idx:]
+        del self.shipdeck[start][stack_idx:]
+            
+        self.shipdeck[end].extend(stack)
+        
+        # for stack in self.shipdeck:
+        #     print(stack)
+        # print()
+
 if __name__ == '__main__':
 
     
     test_file = 'test_data.txt'
     real_file = 'real_data.txt'
 
-    v1 = SupplyStacks()
-    v1.process_data(real_file)
-    for stack in v1.shipdeck:
+    # v1 = SupplyStacks()
+    # v1.process_data(real_file)
+    # for stack in v1.shipdeck:
+    #     print(stack)
+
+    v2 = SupplyStacks_v2()
+    v2.process_data(real_file)
+    for stack in v2.shipdeck:
         print(stack)
