@@ -95,6 +95,18 @@ class NoSpaceOnDevice():
             
             return dir, total
     
+    def smallest_dir_for_shortfall(self, dir, size, shortfall):
+        if dir.subfolders is None:
+            return dir, size
+        else:
+            if size == 0:
+                size = max(size, dir.size if dir.size >= shortfall else size)
+            else:
+                size = min(size, dir.size if dir.size >= shortfall else size)
+        for subdir in dir.subfolders:
+            size = self.smallest_dir_for_shortfall(subdir, size, shortfall)[1]
+        
+        return dir, size, shortfall
 
     def solve_v1(self):
         self.parse_commands()
@@ -104,7 +116,18 @@ class NoSpaceOnDevice():
 
         
 
+    def solve_v2(self):
+        self.parse_commands()
+        self.calculate_folder_sizes(dir=self.root, size=0)
 
+        total_used = self.root.size
+        available = 70000000
+        targeted_unused = 30000000
+        current_unused = available - total_used
+        shortfall = targeted_unused - current_unused
+        sol2 = self.smallest_dir_for_shortfall(dir=self.root, size=0, shortfall=shortfall)[1]
+
+        print(f"Solution 2: {sol2}")
 
 
 
@@ -115,5 +138,6 @@ if __name__ == '__main__':
 
     puzzle_input = pathlib.Path(real_file).read_text().strip()
     tester = NoSpaceOnDevice(puzzle_input=puzzle_input)
-    tester.solve_v1()
+    # tester.solve_v1()
+    tester.solve_v2()
     
