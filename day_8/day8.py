@@ -102,12 +102,122 @@ class TreetopTreeHouse():
         print(self.visible)
         # self.check_visible_right(2,1)
 
+
+class TreetopTreeHouse_v2(TreetopTreeHouse):
+    def __init__(self, puzzle_input) -> None:
+        super().__init__(puzzle_input)
+        self.max_score = 0
+
+    def check_score(self):
+        """
+        Check scenic score of each tree
+        """
+        ## Start at top left
+        cur_row = 0
+        
+        ## TODO: Something isn't working with the up or lefts
+
+        while cur_row <= self.max_row:
+
+            cur_col = 0 # Start at left
+            while cur_col <= self.max_col:
+                ## Accounts for exterior row/cols
+                if cur_row == 0 or cur_col == 0 or cur_row == self.max_row or cur_col == self.max_col:
+                    pass # Edge trees won't have highest score
+                else:
+                    up = self.check_scenic_up(cur_row=cur_row, cur_col=cur_col)
+                    down = self.check_scenic_down(cur_row=cur_row, cur_col=cur_col)
+                    left = self.check_scenic_left(cur_row=cur_row, cur_col=cur_col)
+                    right = self.check_scenic_right(cur_row=cur_row, cur_col=cur_col)
+                    score = up * down * left * right
+                    ## Replace current score if higher
+                    print(f'R: {cur_row+1} C: {cur_col+1}')
+                    print(f'U={up} D={down} L={left} R={right}')
+                    print(f'Score: {score}')
+                    if score > self.max_score:
+                        self.max_score = score
+                    else:
+                        pass
+                cur_col += 1 # Move to next column
+            cur_row += 1 #Move to next row
+
+    def check_scenic_left(self, cur_row, cur_col):
+        cur_tree = int(self.grid[cur_row][cur_col])
+        scenic_score = 0
+        ## Work backwards until index = 0
+        for i in range(cur_col, -1, -1):
+            scenic_score += 1
+            adj_tree = int(self.grid[cur_row][i])
+            # print(f'Row {cur_row} Col: {i}')
+            # print(f'Cur {cur_tree} Adj: {adj_tree}')
+            # print()
+            if adj_tree >= cur_tree:
+                ## If cannot see over, return the scenic score
+                return scenic_score
+            
+        return scenic_score
+
+
+    def check_scenic_right(self, cur_row, cur_col):
+        cur_tree = int(self.grid[cur_row][cur_col])
+        scenic_score = 0
+        for i in range(cur_col+1, self.max_col+1):
+            scenic_score += 1
+            adj_tree = int(self.grid[cur_row][i])
+            # print(f'Row {cur_row} Col: {i}')
+            # print(f'Cur {cur_tree} Adj: {adj_tree}')
+            # print()
+            if adj_tree >= cur_tree:
+                return scenic_score
+            
+        return scenic_score
+
+    def check_scenic_up(self, cur_row, cur_col):
+        cur_tree = int(self.grid[cur_row][cur_col])
+        scenic_score = 0
+        ## Work backwards
+        for i in range(cur_row-1, -1, -1):
+            scenic_score += 1
+            adj_tree = int(self.grid[i][cur_col])
+            # print(f'Row {cur_row} Col: {i}')
+            # print(f'Cur {cur_tree} Adj: {adj_tree}')
+            # print()
+            if adj_tree >= cur_tree:
+                return scenic_score
+            
+        return scenic_score
+        
+
+    def check_scenic_down(self, cur_row, cur_col):
+        cur_tree = int(self.grid[cur_row][cur_col])
+        scenic_score = 0
+        for i in range(cur_row+1, self.max_row+1):
+            scenic_score += 1
+            adj_tree = int(self.grid[i][cur_col])
+            # print(f'Row {cur_row} Col: {i}')
+            # print(f'Cur {cur_tree} Adj: {adj_tree}')
+            # print()
+            if adj_tree >= cur_tree:
+                return scenic_score
+
+        return scenic_score
+
+    def solve_problem(self):
+        self.check_score()
+        print(self.max_score)
+
+        # self.check_scenic_up(3,1)
+        
+
 if __name__ == '__main__':
 
     test_file = 'day_8/test_data.txt'
     real_file = 'day_8/real_data.txt'
 
-    puzzle_input = pathlib.Path(real_file).read_text().strip()
+    puzzle_input = pathlib.Path(test_file).read_text().strip()
 
     tester = TreetopTreeHouse(puzzle_input=puzzle_input)
     tester.solve_problem1()
+
+    tester2 = TreetopTreeHouse_v2(puzzle_input=puzzle_input)
+    tester2.solve_problem()
