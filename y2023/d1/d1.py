@@ -16,7 +16,10 @@
 #         print(line.rstrip())
 
 import sys
-sys.path.append('/workspaces/advent_of_code/y2023')
+# sys.path.append('/workspaces/advent_of_code/y2023')
+## Look at parent directory for imports
+sys.path.append('../')
+
 
 import os
 print(os.getcwd())
