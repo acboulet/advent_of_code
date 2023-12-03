@@ -16,11 +16,11 @@
 #         print(line.rstrip())
 
 import sys
-import os
-sys.path.append('workspaces/advent_of_code')
+sys.path.append('/workspaces/advent_of_code/y2023')
 
+import os
 print(os.getcwd())
-from y2023.advent2023 import PerLineImport
+from advent2023 import PerLineImport
     
 class CalibrationValue(PerLineImport):
     def process_lines(self, line):
@@ -28,7 +28,7 @@ class CalibrationValue(PerLineImport):
     
 
 if __name__ == "__main__":
-    file = 'python/y2023/d1/test.txt'
+    file = 'test.txt'
 
     # advent = AdventImport(file)
     # advent.import_file()
