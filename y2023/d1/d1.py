@@ -2,19 +2,6 @@
 ##  combine first and last digit to get single 2-digit number
 ## sum up these values
 
-# class AdventImport():
-#     def __init__(self, datafile) -> None:
-#         self.datafile = datafile
-
-    
-#     def import_file(self):
-#         with open(self.datafile, 'r') as file:
-#             for line in file:
-#                 self.process_lines(line)
-
-#     def process_lines(self, line):
-#         print(line.rstrip())
-
 import sys
 # sys.path.append('/workspaces/advent_of_code/y2023')
 ## Look at parent directory for imports
