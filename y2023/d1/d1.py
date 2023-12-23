@@ -85,46 +85,115 @@ class CalibrationValue_v2(PerLineImport):
 
         ## Which one appeared first?
         if idx_str < idx_num:
-            return self.string_numbers[number_string]
+            return int(number_string)
         else:
             return calib_string[idx_num]
 
     
     def find_last_digit(self, calib_string):
         ## Largest index containing a number?
-        idx_num = -1000
+        idx_num = -1
+        idx_str = -1
         potential_idx_num = []
-        for index, char in enumerate(calib_string):
-            if char.isdigit():
-                potential_idx_num.append(index)
+
+        # Find the index of the last digit in the string
+        potential_idx_num = [index for index, char in enumerate(calib_string) if char.isdigit()]
         if potential_idx_num:
             idx_num = max(potential_idx_num)
         
         ## Largest index for the string?
-        idx_str = -1000
         potential_idx_str = self.find_string_numbers(calib_string)
         if potential_idx_str:
             idx_str = max(potential_idx_str.keys())
-            number_string = potential_idx_str[idx_str]
-            ## calculated value is length of the string as well
-            idx_str = idx_str + len(number_string)
+
 
         ## Which one appeared last?
         if idx_str > idx_num:
-            return self.string_numbers[number_string]
+            return potential_idx_str[idx_str]
         else:
-            return calib_string[idx_num]
+            return int(calib_string[idx_num])
 
     def find_string_numbers(self, calib_string):
         ## Find indexes and strings of numbers in the calib_String
         ## Track all string numbers found where key is index, and value is string number
         potential_idx_str = {}
-        ## Find the index of the string number
-        for s in self.string_numbers.keys():
-            i = calib_string.find(s)
-            ## Anything other means it was found
-            if i > -1:
-                potential_idx_str[i] = s
+
+        for word, number in self.string_numbers.items():
+            index = calib_string.find(word)
+            if index != -1:
+                potential_idx_str[index] = number
+        return potential_idx_str
+
+    def main(self):
+        self.import_file()
+        print(self.calib_sum)
+
+
+class CalibrationValue_GPT(PerLineImport):
+    def __init__(self, datafile) -> None:
+        super().__init__(datafile)
+
+        self.calib_sum = 0
+        self.string_numbers = {
+            'one': 1,
+            'two': 2,
+            'three': 3,
+            'four': 4,
+            'five': 5,
+            'six': 6,
+            'seven': 7,
+            'eight': 8,
+            'nine': 9
+        }
+
+    def process_lines(self, line):
+        first = self.find_first_digit(line.strip())
+        last = self.find_last_digit(line.strip())
+
+        # Check if first anzd last are valid digits, then add to sum
+        if first is not None and last is not None:
+            two_digit_number = int(str(first) + str(last))
+            self.calib_sum += two_digit_number
+
+    def find_first_digit(self, calib_string):
+        int_idx = 100
+        str_idx = 100
+        for idx, char in enumerate(calib_string):
+            if char.isdigit():
+                int_idx = int(idx)
+                break
+
+        potential_idx_str = self.find_string_numbers(calib_string)
+        if potential_idx_str:
+            str_idx = min(potential_idx_str.keys())
+
+        if str_idx < int_idx:
+            return potential_idx_str[str_idx]
+        else:
+            return calib_string[int_idx]
+
+    def find_last_digit(self, calib_string):
+        int_idx = -1
+        str_idx = -1
+        potential_idx_num = [index for index, char in enumerate(calib_string) if char.isdigit()]
+        if potential_idx_num:
+            int_idx = int(max(potential_idx_num))
+
+        potential_idx_str = self.find_string_numbers(calib_string)
+        if potential_idx_str:
+            str_idx = max(potential_idx_str.keys())
+
+        if str_idx > int_idx:
+            return potential_idx_str[str_idx]
+        else:
+            return calib_string[int_idx]
+
+    def find_string_numbers(self, calib_string):
+        potential_idx_str = {}
+        for word, number in self.string_numbers.items():
+            index = calib_string.find(word)
+            if index != -1:
+                potential_idx_str[index] = number
         return potential_idx_str
 
     def main(self):
@@ -142,7 +211,7 @@ if __name__ == "__main__":
     # calib.main()
     # ## answer 54632
 
-    calib = CalibrationValue_v2(file)
+    calib = CalibrationValue_GPT(file)
     calib.main()
     ## answer 
     
