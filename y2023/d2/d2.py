@@ -7,7 +7,7 @@ from advent2023 import PerLineImport
 
 ## The line identifies the 'Game ##'
 ## Followed by number and color of cubes column seperarted
-## Include subsets of how they were revealed seperated by ';'
+## Include subsets of how they were revealed seperated by ';'import
 ## Is the game True if only 12 red, 13 green, and 14 blue
 
 class CubeConundrum_v1(PerLineImport):
